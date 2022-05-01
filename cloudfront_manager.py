@@ -1,9 +1,14 @@
 '''
-Useful for sending one or multiple messages to AWS SQS.Especially useful for those using Windows OS.
+Useful for Invalidate Cloudfront distribution, Enable/Disable or delete it for those using Windows OS.
 The application is build using PySimpleGUI. 
 It expects you have setup the aws id/key in
 Linux:   /home/[username]/.aws
 Windows: /Users/[username]/.aws
+
+To do:
+1: Display distribution detail for giving ID. Currently "Display Distribution"" function not implemented"
+2: Move threading function to seperate file and call the module
+3:  
 
 '''
 
@@ -79,7 +84,7 @@ config_layout = [[sg.Column(config)]]
 
 tabgrp = [[sg.TabGroup([[sg.Tab('Config', config_layout)],[sg.Tab('Cloudfront', sqs_layout)]])]]  
 
-#--------------AWS SQS specific Functions--------------------------------------
+#--------------AWS Cloudfront specific Functions--------------------------------------
 
 #get list of all the available queues in a region
 
