@@ -9,7 +9,7 @@ To do:
 1: Display distribution detail for giving ID. Currently "Display Distribution"" function not implemented"
 2: Move threading functions to seperate file and call the module
 3: Move cloudfront functions to sperate file and call the module 
-
+4: Remove the region from the functions
 '''
 
 import PySimpleGUI as sg
@@ -130,6 +130,34 @@ def get_distribution_detail(REGION_NAME,ID,window):
             Id=ID
             )
         return response
+        
+    except Exception as e:
+        return(e)    
+
+
+def get_single_distribution(REGION_NAME,ID,window):
+    REGION_CONFIG = Config(
+    region_name = REGION_NAME,
+    signature_version = 'v4',
+    retries = {
+        'max_attempts': 3
+        }
+    )
+    try:
+        CLIENT = session.client('cloudfront', config=REGION_CONFIG)
+        
+        response = CLIENT.get_distribution(
+            Id=ID
+            )
+        distribution_list_data.clear()
+        #for item in response['Distribution']:
+        distribution_list_data.append([response['Distribution']['Id'], 
+                                       response['Distribution']['DomainName'],
+                                       response['Distribution']['DistributionConfig']['Comment'], 
+                                       response['Distribution']['Status'], 
+                                       response['Distribution']['DistributionConfig']['Enabled'], 
+                                       response['Distribution']['LastModifiedTime']])
+        return distribution_list_data
         
     except Exception as e:
         return(e)    
@@ -265,7 +293,16 @@ def dist_list_worker_thread(region_name, window):
         window["_DIST_"].update(data)                
     except Exception as e:
         window.write_event_value('-WRITE-',e)
-    
+        
+def single_dist_worker_thread(region_name,ID, window):
+    try:
+        data=[]
+        data = get_single_distribution("ap-southeast-2",ID, window)
+        window["_DIST_"].update(data)                
+    except Exception as e:
+        window.write_event_value('-WRITE-',e)
+
+
 def dist_detail_worker_thread(region_name, ID, window):
     try:
         distribution_data.clear()
@@ -377,6 +414,13 @@ def main():
                 
             except Exception as e:
                  window["-CONSOLEMSG-"].update(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")) +": "+str(e)+"\n", append=True )
+
+        
+        if event == "Display Distribution":
+            if not values['-DistID-']:
+                sg.popup("Missing Distribution ID")
+            else:
+                threading.Thread(target=single_dist_worker_thread, args=("ap-southeast-2",str(values['-DistID-']),window,),  daemon=True).start()
 
                 
         if event == 'Save Console':
