@@ -101,11 +101,16 @@ def get_distribution_list(REGION_NAME,window):
         
         response = CLIENT.list_distributions(
             MaxItems='100'
-            )
-        distribution_list_data.clear()
-        for item in response['DistributionList']['Items']:
-            distribution_list_data.append([item['Id'], item['DomainName'], item['Comment'], item['Status'], item['Enabled'], item['LastModifiedTime']])
-        return distribution_list_data
+            )        
+        # print (response)
+        
+        if response['DistributionList']['Quantity'] == 0:
+            window.write_event_value('-WRITE-',"There is no cloudfront distribution")
+        else:
+            distribution_list_data.clear()
+            for item in response['DistributionList']['Items']:
+                distribution_list_data.append([item['Id'], item['DomainName'], item['Comment'], item['Status'], item['Enabled'], item['LastModifiedTime']])
+            return distribution_list_data
     except Exception as e:
         return(e)
 
