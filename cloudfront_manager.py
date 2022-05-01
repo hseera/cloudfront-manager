@@ -7,8 +7,8 @@ Windows: /Users/[username]/.aws
 
 To do:
 1: Display distribution detail for giving ID. Currently "Display Distribution"" function not implemented"
-2: Move threading function to seperate file and call the module
-3:  
+2: Move threading functions to seperate file and call the module
+3: Move cloudfront functions to sperate file and call the module 
 
 '''
 
