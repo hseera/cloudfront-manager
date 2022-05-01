@@ -62,7 +62,7 @@ dist =[
     [sg.Table(values=distribution_list_data,key="_DIST_", headings=['ID', 'Domain Name','Description','Status','Enabled','Last modified'],auto_size_columns=False, col_widths=[27, 30, 30],  num_rows=15,justification='left',right_click_menu=['&Right', ['Invalidate', 'Disable','Enable', 'Delete','Refresh']],enable_events=True )]
     ]
 
-sqs_layout = [
+cfn_layout = [
     [
      sg.Column(dist)],      
      [
@@ -82,7 +82,7 @@ config =[
 
 config_layout = [[sg.Column(config)]]
 
-tabgrp = [[sg.TabGroup([[sg.Tab('Config', config_layout)],[sg.Tab('Cloudfront', sqs_layout)]])]]  
+tabgrp = [[sg.TabGroup([[sg.Tab('Config', config_layout)],[sg.Tab('Cloudfront', cfn_layout)]])]]  
 
 #--------------AWS Cloudfront specific Functions--------------------------------------
 
