@@ -105,12 +105,13 @@ def get_distribution_list(REGION_NAME,window):
         # print (response)
         
         if response['DistributionList']['Quantity'] == 0:
+            distribution_list_data.clear()
             window.write_event_value('-WRITE-',"There is no cloudfront distribution")
         else:
             distribution_list_data.clear()
             for item in response['DistributionList']['Items']:
                 distribution_list_data.append([item['Id'], item['DomainName'], item['Comment'], item['Status'], item['Enabled'], item['LastModifiedTime']])
-            return distribution_list_data
+        return distribution_list_data
     except Exception as e:
         return(e)
 
@@ -303,6 +304,13 @@ def single_dist_worker_thread(region_name,ID, window):
         window.write_event_value('-WRITE-',e)
 
 
+def delete_dist_worker_thread(region_name,ID, window):
+    try:
+        delete_distribution("ap-southeast-2",ID, window)
+    except Exception as e:
+        window.write_event_value('-WRITE-',e)
+
+
 def dist_detail_worker_thread(region_name, ID, window):
     try:
         distribution_data.clear()
@@ -401,7 +409,7 @@ def main():
             
         
         if event == 'Delete':
-            delete_distribution("ap-southeast-2",distribution_data[0][0], window)
+            threading.Thread(target=delete_dist_worker_thread, args=("ap-southeast-2",distribution_data[0][0],window,),  daemon=True).start()
 
         
         if event == 'Invalidate':
